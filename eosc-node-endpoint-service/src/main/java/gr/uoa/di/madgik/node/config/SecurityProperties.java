@@ -13,8 +13,8 @@ import java.util.Set;
 public class SecurityProperties implements InitializingBean {
 
     private Set<String> adminEmails = new LinkedHashSet<>();
-    private String loginRedirect = "/";
-    private String logoutRedirect = "/";
+    private String loginRedirect = "";
+    private String logoutRedirect = "";
 
     public Set<String> getAdminEmails() {
         return adminEmails;

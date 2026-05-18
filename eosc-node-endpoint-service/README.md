@@ -18,6 +18,17 @@ See [Configuration](#configuration) for the required properties and an example c
 
 From the repository root:
 
+This repository contains a Compose setup for the backend service only. It is useful for running or validating this component, but it is not a complete production deployment for the full application. In production, deploy this service together with the front-end and your reverse proxy or ingress configuration in an environment-specific stack.
+
+Create `compose/config/.env` with the values consumed by [../compose/config/application.properties](../compose/config/application.properties):
+
+```properties
+ADMIN_EMAILS=user@example.com,other@example.com
+ISSUER_URI=https://core-proxy.node.eosc-beyond.eu/auth/realms/core
+CLIENT_ID=my-client-id
+CLIENT_SECRET=my-client-secret
+```
+
 ```bash
 make docker-build
 make docker-compose
@@ -27,6 +38,19 @@ The Docker image repository is `docker.madgik.di.uoa.gr/eosc-node-endpoint-servi
 `make docker-build` builds an image with the Paketo health-checker buildpack.
 
 The Compose setup in [../compose/docker-compose.yml](../compose/docker-compose.yml) exposes the service on `127.0.0.1:8888`, loads [../compose/config/application.properties](../compose/config/application.properties), and runs the container as the current host UID/GID.
+The published host port is for access from the host machine. Other containers in the same Compose network should call the service by its Compose service name and container port, for example `http://endpoint:8080`.
+The front-end is maintained in a separate repository and is not included in this Compose file.
+
+For production, provide at least:
+
+| Concern | Production responsibility |
+|---------|---------------------------|
+| Front-end integration | Configure the front-end container or reverse proxy to route the public backend base path to this service, including API, OAuth2 login, and logout requests. Inside a Compose network, use the backend service name and port `8080`; the published host port is only for host access. |
+| TLS and public routing | Terminate HTTPS and set the public host/path through your ingress or reverse proxy |
+| Secrets | Provide OAuth2 client credentials and admin emails through your platform's secret mechanism |
+| Storage | Mount persistent storage for `capabilities.filepath` |
+| Redirects | Set `security.login-redirect` and `security.logout-redirect` to the public front-end URLs |
+| Images | Pin released image tags rather than deploying floating local builds |
 
 To stop it:
 
@@ -38,14 +62,17 @@ make docker-compose-down
 
 Common runtime properties:
 
-| Property | Description | Default |
-|----------|-------------|---------|
-| `capabilities.filepath` | Path to the JSON storage file | - |
-| `capabilities.cache.ttl` | Cache TTL for loaded file contents, using Spring duration syntax | `PT60S` |
-| `server.port` | HTTP port | `8080` |
-| `server.servlet.session.cookie.name` | Name of the HTTP session cookie used by the OAuth2 login flow | `NE_SESSION` |
-| `server.servlet.session.cookie.path` | Cookie path | `/` |
-| `security.admin-emails` | Comma-separated list of email addresses granted admin access | - |
+| Property | Description | Default                  |
+|----------|-------------|--------------------------|
+| `capabilities.filepath` | Path to the JSON storage file | `/tmp/capabilities.json` |
+| `capabilities.cache.ttl` | Cache TTL for loaded file contents, using Spring duration syntax | `PT60S`                  |
+| `server.port` | HTTP port | `8080`                   |
+| `server.servlet.context-path` | Base path for all HTTP endpoints | `/api`                   |
+| `server.servlet.session.cookie.name` | Name of the HTTP session cookie used by the OAuth2 login flow | `NE_SESSION`             |
+| `server.servlet.session.cookie.path` | Cookie path | `/`                      |
+| `security.admin-emails` | Comma-separated list of email addresses granted admin access | -                        |
+| `security.login-redirect` | Redirect URL after a successful OAuth2 login | -                        |
+| `security.logout-redirect` | Redirect URL after logout | -                        |
 
 Because the OAuth2 properties contain secrets, supply them via an external config file rather than inline flags:
 
@@ -62,6 +89,8 @@ capabilities:
 
 security:
   admin-emails: user@example.com,other@example.com
+  login-redirect: https://node.eosc-beyond.eu/admin/
+  logout-redirect: https://node.eosc-beyond.eu/admin/
 
 spring:
   security:
@@ -77,13 +106,14 @@ spring:
 ```
 
 `--spring.config.additional-location` merges the external file on top of the bundled defaults, so only the properties that differ need to be set.
+Override `capabilities.filepath` for any deployment where the file must survive restarts.
 
 Manual edits to `capabilities.json` are picked up after the cache TTL expires.
 The TTL uses Spring Boot duration syntax, for example `PT60S`, `PT5M`, or `1m`.
 
 ### OAuth2 / EOSC AAI Properties
 
-Required when using the OAuth2 browser login flow:
+Required for authenticated requests:
 
 | Property | Description |
 |----------|-------------|
@@ -93,6 +123,8 @@ Required when using the OAuth2 browser login flow:
 | `spring.security.oauth2.client.registration.eosc.client-name` | Display name for the login button, default `EOSC` |
 | `spring.security.oauth2.client.registration.eosc.scope` | Requested scopes, default `openid`, `email`, `profile`, `entitlements` |
 | `spring.security.oauth2.resourceserver.jwt.issuer-uri` | Issuer URI for JWT access token validation |
+
+The OAuth2 login flow requires the `spring.security.oauth2.client.*` properties. Bearer-token requests also use the `eosc` client provider metadata to call the UserInfo endpoint and map the authenticated email to the `ADMIN` authority.
 
 ## Authentication
 
@@ -115,7 +147,7 @@ curl -X PUT http://localhost:8888/api/endpoint \
   -d '...'
 ```
 
-The service validates the token against the EOSC AAI JWKS using the issuer URI configured in `spring.security.oauth2.resourceserver.jwt.issuer-uri`. No session is created for this flow.
+The service validates the token against the EOSC AAI JWKS using the issuer URI configured in `spring.security.oauth2.resourceserver.jwt.issuer-uri`, then calls the EOSC AAI UserInfo endpoint to resolve the user's email. No session is created for this flow.
 
 Unauthenticated or unauthorized requests receive `401 Unauthorized` or `403 Forbidden`.
 
