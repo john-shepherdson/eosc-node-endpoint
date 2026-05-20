@@ -23,7 +23,7 @@ This repository contains a Compose setup for the backend service only. It is use
 Create `compose/config/.env` with the values consumed by [../compose/config/application.properties](../compose/config/application.properties):
 
 ```properties
-ADMIN_EMAILS=user@example.com,other@example.com
+ADMIN_EMAILS=user@eosc-beyond.eu,other@eosc-beyond.eu
 ISSUER_URI=https://core-proxy.node.eosc-beyond.eu/auth/realms/core
 CLIENT_ID=my-client-id
 CLIENT_SECRET=my-client-secret
@@ -37,15 +37,15 @@ make docker-compose
 The Docker image repository is `docker.madgik.di.uoa.gr/eosc-node-endpoint-service`; the tag comes from the Maven project version.
 `make docker-build` builds an image with the Paketo health-checker buildpack.
 
-The Compose setup in [../compose/docker-compose.yml](../compose/docker-compose.yml) exposes the service on `127.0.0.1:8888`, loads [../compose/config/application.properties](../compose/config/application.properties), and runs the container as the current host UID/GID.
-The published host port is for access from the host machine. Other containers in the same Compose network should call the service by its Compose service name and container port, for example `http://endpoint:8080`.
+The Compose setup in [../compose/compose.yaml](../compose/compose.yaml) exposes the service on `127.0.0.1:8080`, loads [../compose/config/application.properties](../compose/config/application.properties), and runs the container as the current host UID/GID.
+The published host port is for access from the host machine. A reverse proxy or another container in the same Compose network should call the service by its Compose service name and container port, for example `http://endpoint:8080`.
 The front-end is maintained in a separate repository and is not included in this Compose file.
 
 For production, provide at least:
 
 | Concern | Production responsibility |
 |---------|---------------------------|
-| Front-end integration | Configure the front-end container or reverse proxy to route the public backend base path to this service, including API, OAuth2 login, and logout requests. Inside a Compose network, use the backend service name and port `8080`; the published host port is only for host access. |
+| Front-end integration | Configure the public reverse proxy to route the backend base path used by the UI to this service, including API, OAuth2 login, and logout requests. Inside a Compose network, use the backend service name and port `8080`; the published host port is only for host access. |
 | TLS and public routing | Terminate HTTPS and set the public host/path through your ingress or reverse proxy |
 | Secrets | Provide OAuth2 client credentials and admin emails through your platform's secret mechanism |
 | Storage | Mount persistent storage for `capabilities.filepath` |
@@ -81,16 +81,16 @@ java -jar eosc-node-endpoint-service-<version>.jar \
   --spring.config.additional-location=file:/path/to/application.yaml
 ```
 
-Use [`src/main/resources/application.yaml`](src/main/resources/application.yaml) as a starting point. A minimal deployment file looks like:
+Use [`src/main/resources/application.yaml`](src/main/resources/application.yaml) as a starting point. An application properties yaml file looks like:
 
 ```yaml
 capabilities:
   filepath: /path/to/capabilities.json
 
 security:
-  admin-emails: user@example.com,other@example.com
-  login-redirect: https://node.eosc-beyond.eu/admin/
-  logout-redirect: https://node.eosc-beyond.eu/admin/
+  admin-emails: user@eosc-beyond.eu,other@eosc-beyond.eu
+  login-redirect: https://node.eosc-beyond.eu/
+  logout-redirect: https://node.eosc-beyond.eu/
 
 spring:
   security:
@@ -103,6 +103,7 @@ spring:
           eosc:
             client-id: my-client-id
             client-secret: my-client-secret
+            redirect-uri: https://node.eosc-beyond.eu/
 ```
 
 `--spring.config.additional-location` merges the external file on top of the bundled defaults, so only the properties that differ need to be set.
@@ -121,6 +122,7 @@ Required for authenticated requests:
 | `spring.security.oauth2.client.registration.eosc.client-id` | OAuth2 client ID |
 | `spring.security.oauth2.client.registration.eosc.client-secret` | OAuth2 client secret |
 | `spring.security.oauth2.client.registration.eosc.client-name` | Display name for the login button, default `EOSC` |
+| `spring.security.oauth2.client.registration.eosc.redirect-uri` | OAuth2 redirect URI sent to the provider; defaults to `{baseUrl}/login/oauth2/code/{registrationId}`. Set this explicitly when the service is behind a reverse proxy and its public URL differs from its own base URL, e.g. `https://node.eosc-beyond.eu/api/login/oauth2/code/eosc` |
 | `spring.security.oauth2.client.registration.eosc.scope` | Requested scopes, default `openid`, `email`, `profile`, `entitlements` |
 | `spring.security.oauth2.resourceserver.jwt.issuer-uri` | Issuer URI for JWT access token validation |
 
@@ -141,7 +143,7 @@ This flow requires the `spring.security.oauth2.client.*` properties to be set.
 Obtain an access token from the EOSC AAI token endpoint and pass it in the `Authorization` header:
 
 ```bash
-curl -X PUT http://localhost:8888/api/endpoint \
+curl -X PUT http://localhost:8080/api/endpoint \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '...'
@@ -165,7 +167,7 @@ Request and response bodies use the model documented in [../eosc-node-capabiliti
 ### Example Update
 
 ```bash
-curl -X PUT http://localhost:8888/api/endpoint \
+curl -X PUT http://localhost:8080/api/endpoint \
   -H "Authorization: Bearer <access_token>" \
   -H "Content-Type: application/json" \
   -d '{

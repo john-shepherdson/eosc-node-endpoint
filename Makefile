@@ -18,10 +18,10 @@ docker-push:
 	docker image push $(IMAGE_NAME)
 
 docker-compose:
-	IMAGE_NAME=$(IMAGE_NAME) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) docker compose -f compose/docker-compose.yml up
+	IMAGE_NAME=$(IMAGE_NAME) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) docker compose -f compose/compose.yaml up
 
 docker-compose-down:
-	IMAGE_NAME=$(IMAGE_NAME) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) docker compose -f compose/docker-compose.yml down
+	IMAGE_NAME=$(IMAGE_NAME) HOST_UID=$(HOST_UID) HOST_GID=$(HOST_GID) docker compose -f compose/compose.yaml down
 
 default: docker-build docker-push
 

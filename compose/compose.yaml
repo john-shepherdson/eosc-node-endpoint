@@ -1,10 +1,12 @@
+name: eosc-node-endpoint
+
 services:
   endpoint:
     image: ${IMAGE_NAME:-docker.madgik.di.uoa.gr/eosc-node-endpoint-service:latest}
     user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
     container_name: node-endpoint
     ports:
-      - "127.0.0.1:8888:8080"
+      - "127.0.0.1:8080:8080"
     env_file:
       - ./config/.env
     environment:
@@ -20,3 +22,9 @@ services:
     restart: always
     volumes:
       - ./config:/app/config
+    networks:
+      - endpoint-net
+
+networks:
+  endpoint-net:
+    name: eosc-node-endpoint-net
