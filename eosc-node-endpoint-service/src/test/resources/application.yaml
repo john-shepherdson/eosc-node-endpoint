@@ -1,0 +1,8 @@
+capabilities:
+  filepath: /tmp/capabilities-test.json
+
+### Security Properties ###
+security:
+  admin-emails: admin@eosc-beyond.eu
+  login-redirect: http://localhost:4200
+  logout-redirect: http://localhost:4200

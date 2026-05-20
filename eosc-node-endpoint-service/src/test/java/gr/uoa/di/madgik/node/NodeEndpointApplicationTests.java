@@ -28,7 +28,7 @@ import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 
-@SpringBootTest(properties = "security.admin-emails=admin@eosc-beyond.eu")
+@SpringBootTest
 class NodeEndpointApplicationTests {
 
 	@Test

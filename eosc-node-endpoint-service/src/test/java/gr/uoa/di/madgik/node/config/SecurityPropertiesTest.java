@@ -13,6 +13,8 @@ class SecurityPropertiesTest {
     void acceptsCompleteConfiguration() {
         SecurityProperties properties = new SecurityProperties();
         properties.setAdminEmails(Set.of("admin@eosc-beyond.eu"));
+        properties.setLoginRedirect("http://localhost:4200");
+        properties.setLogoutRedirect("http://localhost:4200");
 
         assertThatCode(properties::afterPropertiesSet).doesNotThrowAnyException();
     }

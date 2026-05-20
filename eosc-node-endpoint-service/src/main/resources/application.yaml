@@ -15,6 +15,8 @@ capabilities:
 ### Security Properties ###
 security:
   admin-emails:
+  login-redirect:
+  logout-redirect:
 #### EOSC AAI Authentication ####
 spring:
   security:
