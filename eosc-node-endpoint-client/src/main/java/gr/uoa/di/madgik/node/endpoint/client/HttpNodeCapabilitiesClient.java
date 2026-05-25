@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -37,6 +38,10 @@ import java.util.Objects;
 public class HttpNodeCapabilitiesClient implements NodeCapabilitiesClient {
 
     private static final String APPLICATION_JSON = "application/json";
+    private static final String APPLICATION_JSON_SUFFIX = "application/*+json";
+    private static final String APPLICATION_OCTET_STREAM = "application/octet-stream";
+    private static final String TEXT_PLAIN = "text/plain";
+    private static final String TEXT_JSON = "text/json";
 
     private final URI endpointUri;
     private final HttpClient httpClient;
@@ -95,9 +100,9 @@ public class HttpNodeCapabilitiesClient implements NodeCapabilitiesClient {
     }
 
     private NodeCapabilities send(HttpRequest request) {
-        HttpResponse<String> response;
+        HttpResponse<byte[]> response;
         try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new NodeClientException("Endpoint capabilities request was interrupted", e);
@@ -109,7 +114,7 @@ public class HttpNodeCapabilitiesClient implements NodeCapabilitiesClient {
             throw new NodeClientException(
                     "Endpoint capabilities API returned HTTP " + response.statusCode(),
                     response.statusCode(),
-                    response.body());
+                    new String(response.body(), StandardCharsets.UTF_8));
         }
 
         try {
@@ -125,7 +130,12 @@ public class HttpNodeCapabilitiesClient implements NodeCapabilitiesClient {
 
     private HttpRequest.Builder applyCommonHeaders(HttpRequest.Builder builder, String accessToken) {
         builder.timeout(requestTimeout)
-                .header("Accept", APPLICATION_JSON);
+                .header("Accept", String.join(", ",
+                        APPLICATION_JSON,
+                        APPLICATION_JSON_SUFFIX,
+                        APPLICATION_OCTET_STREAM,
+                        TEXT_PLAIN,
+                        TEXT_JSON));
 
         if (accessToken != null && !accessToken.isBlank()) {
             builder.header("Authorization", "Bearer " + accessToken);

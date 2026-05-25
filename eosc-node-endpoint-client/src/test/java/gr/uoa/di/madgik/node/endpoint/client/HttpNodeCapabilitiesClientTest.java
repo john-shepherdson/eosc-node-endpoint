@@ -30,6 +30,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpHeaders;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,8 @@ class HttpNodeCapabilitiesClientTest {
 
         assertEquals("GET", httpClient.request.method());
         assertEquals(ENDPOINT_URI, httpClient.request.uri());
+        assertEquals("application/json, application/*+json, application/octet-stream, text/plain, text/json",
+                httpClient.request.headers().firstValue("Accept").orElseThrow());
         assertEquals(URI.create("https://node.eosc-beyond.eu"), result.getNodeEndpoint());
         assertEquals("metadata", result.getCapabilities().getFirst().getCapabilityType());
     }
@@ -139,7 +142,7 @@ class HttpNodeCapabilitiesClientTest {
         public <T> HttpResponse<T> send(HttpRequest request, HttpResponse.BodyHandler<T> responseBodyHandler) {
             this.request = request;
             @SuppressWarnings("unchecked")
-            T body = (T) responseBody;
+            T body = (T) responseBody.getBytes(StandardCharsets.UTF_8);
             return new SimpleHttpResponse<>(request, statusCode, body);
         }
 
