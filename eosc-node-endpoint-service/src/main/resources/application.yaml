@@ -30,6 +30,6 @@ spring:
             client-id:
             client-name: EOSC
             client-secret:
-            scope: openid,email,profile,entitlements
+            scope: openid,email,profile
 
       resourceserver.jwt.issuer-uri: ${spring.security.oauth2.client.provider.eosc.issuer-uri}
