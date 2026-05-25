@@ -39,7 +39,7 @@ import java.util.Optional;
 public class Capability {
 
     private String capabilityType;
-    private String endpoint;
+    private URI endpoint;
     private String version;
     private URI apiSpec;
     private String protocol = Protocol.REST.value();
@@ -56,12 +56,16 @@ public class Capability {
         this.capabilityType = capabilityType;
     }
 
-    public String getEndpoint() {
+    public URI getEndpoint() {
         return endpoint;
     }
 
-    public void setEndpoint(String endpoint) {
+    public void setEndpoint(URI endpoint) {
         this.endpoint = endpoint;
+    }
+
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint == null ? null : URI.create(endpoint);
     }
 
     public String getVersion() {

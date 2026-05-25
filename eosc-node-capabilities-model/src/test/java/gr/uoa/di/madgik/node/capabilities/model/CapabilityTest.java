@@ -18,6 +18,8 @@ package gr.uoa.di.madgik.node.capabilities.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -84,6 +86,15 @@ class CapabilityTest {
         capability.setStatus((String) null);
 
         assertNull(capability.getStatus());
+    }
+
+    @Test
+    void setEndpointAcceptsStringAsUriConvenience() {
+        Capability capability = new Capability();
+
+        capability.setEndpoint("https://node.eosc-beyond.eu/api/test");
+
+        assertEquals(URI.create("https://node.eosc-beyond.eu/api/test"), capability.getEndpoint());
     }
 
     @Test
