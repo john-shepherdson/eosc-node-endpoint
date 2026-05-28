@@ -10,6 +10,7 @@ Multi-module Java project for publishing and consuming EOSC Node endpoint capabi
 |--------|-------------|
 | [`eosc-node-capabilities-model`](eosc-node-capabilities-model) | Reusable DTOs and recommended protocol/status values |
 | [`eosc-node-endpoint-client`](eosc-node-endpoint-client) | Java HTTP client for the endpoint capabilities API |
+| [`eosc-node-registry-client`](eosc-node-registry-client) | Java HTTP client for resolving Node Registry entries |
 | [`eosc-node-endpoint-service`](eosc-node-endpoint-service) | Spring Boot service that stores and exposes endpoint capabilities |
 
 ## Prerequisites
@@ -64,6 +65,12 @@ Other Java projects can depend on the reusable modules:
 <dependency>
   <groupId>gr.uoa.di.madgik</groupId>
   <artifactId>eosc-node-endpoint-client</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+</dependency>
+
+<dependency>
+  <groupId>gr.uoa.di.madgik</groupId>
+  <artifactId>eosc-node-registry-client</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```

@@ -7,14 +7,14 @@ Capabilities are stored in a `capabilities.json` file at your chosen location an
 
 ## Run
 
+Run the packaged service directly when you want to start the backend without Docker.
+
+From this module directory:
+
 ```bash
-java -jar eosc-node-endpoint-service-<version>.jar \
+java -jar target/eosc-node-endpoint-service-<version>.jar \
   --spring.config.additional-location=file:/path/to/application.yaml
 ```
-
-See [Configuration](#configuration) for the required properties and an example config file.
-
-## Docker
 
 From the repository root:
 
@@ -30,13 +30,15 @@ CLIENT_SECRET=my-client-secret
 ```
 
 ```bash
-make docker-build
-make docker-compose
+java -jar eosc-node-endpoint-service/target/eosc-node-endpoint-service-<version>.jar \
+  --spring.config.additional-location=file:/path/to/application.yaml
 ```
 
+<<<<<<< Updated upstream
 The Docker image repository is `docker.madgik.di.uoa.gr/eosc-node-endpoint-service`; the tag comes from the Maven project version.
 `make docker-build` builds an image with the Paketo health-checker buildpack.
 
+<<<<<<< Updated upstream
 The Compose setup in [../compose/compose.yaml](../compose/compose.yaml) exposes the service on `127.0.0.1:8080`, loads [../compose/config/application.properties](../compose/config/application.properties), and runs the container as the current host UID/GID.
 The published host port is for access from the host machine. A reverse proxy or another container in the same Compose network should call the service by its Compose service name and container port, for example `http://endpoint:8080`.
 The front-end is maintained in a separate repository and is not included in this Compose file.
@@ -51,17 +53,34 @@ For production, provide at least:
 | Storage | Mount persistent storage for `capabilities.filepath` |
 | Redirects | Set `security.login-redirect` and `security.logout-redirect` to the public front-end URLs |
 | Images | Pin released image tags rather than deploying floating local builds |
+=======
+The Compose setup in [../compose/docker-compose.yml](../compose/docker-compose.yml) exposes the service on `127.0.0.1:8888`, loads [../compose/config/application.properties](../compose/config/application.properties), and runs the container as the current host UID/GID.
+=======
+See [Configuration](#configuration) for the required properties and an example config file.
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
-To stop it:
+## Docker
 
-```bash
-make docker-compose-down
-```
+See [Run with Docker Compose](../compose/README.md) for building the image and running the service using Docker Compose.
 
 ## Configuration
 
 Common runtime properties:
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+| Property | Description | Default |
+|----------|-------------|---------|
+| `capabilities.filepath` | Path to the JSON storage file | - |
+| `capabilities.cache.ttl` | Cache TTL for loaded file contents, using Spring duration syntax | `PT60S` |
+| `server.port` | HTTP port | `8080` |
+| `server.servlet.session.cookie.name` | Name of the HTTP session cookie used by the OAuth2 login flow | `NE_SESSION` |
+| `server.servlet.session.cookie.path` | Cookie path | `/` |
+| `security.admin-emails` | Comma-separated list of email addresses granted admin access | - |
+=======
+>>>>>>> Stashed changes
 | Property | Description | Default                  |
 |----------|-------------|--------------------------|
 | `capabilities.filepath` | Path to the JSON storage file | `/tmp/capabilities.json` |
@@ -70,6 +89,7 @@ Common runtime properties:
 | `server.servlet.context-path` | Base path for all HTTP endpoints | `/api`                   |
 | `server.servlet.session.cookie.name` | Name of the HTTP session cookie used by the OAuth2 login flow | `NE_SESSION`             |
 | `server.servlet.session.cookie.path` | Cookie path | `/`                      |
+<<<<<<< Updated upstream
 | `security.admin-emails` | Comma-separated list of email addresses granted admin access | -                        |
 | `security.login-redirect` | Redirect URL after a successful OAuth2 login | -                        |
 | `security.logout-redirect` | Redirect URL after logout | -                        |
@@ -80,6 +100,15 @@ Because the OAuth2 properties contain secrets, supply them via an external confi
 java -jar eosc-node-endpoint-service-<version>.jar \
   --spring.config.additional-location=file:/path/to/application.yaml
 ```
+=======
+| `security.admin-emails` | Comma-separated list of email addresses granted admin access | (required)               |
+| `security.login-redirect` | Redirect URL after a successful OAuth2 login | (required)               |
+| `security.logout-redirect` | Redirect URL after logout | (required)               |
+>>>>>>> Stashed changes
+
+Because the OAuth2 properties contain secrets, supply them via an external config file rather than inline flags.
+`--spring.config.additional-location` merges the external file on top of the bundled defaults, so only the properties that differ need to be set.
+>>>>>>> Stashed changes
 
 Use [`src/main/resources/application.yaml`](src/main/resources/application.yaml) as a starting point. An application properties yaml file looks like:
 
@@ -106,8 +135,15 @@ spring:
             redirect-uri: https://node.eosc-beyond.eu/
 ```
 
+<<<<<<< Updated upstream
 `--spring.config.additional-location` merges the external file on top of the bundled defaults, so only the properties that differ need to be set.
+<<<<<<< Updated upstream
 Override `capabilities.filepath` for any deployment where the file must survive restarts.
+=======
+=======
+Override `capabilities.filepath` for any deployment where the file must survive restarts.
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 Manual edits to `capabilities.json` are picked up after the cache TTL expires.
 The TTL uses Spring Boot duration syntax, for example `PT60S`, `PT5M`, or `1m`.

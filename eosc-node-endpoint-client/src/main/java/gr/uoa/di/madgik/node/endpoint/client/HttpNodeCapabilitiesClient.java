@@ -25,7 +25,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Objects;
 
@@ -100,9 +99,9 @@ public class HttpNodeCapabilitiesClient implements NodeCapabilitiesClient {
     }
 
     private NodeCapabilities send(HttpRequest request) {
-        HttpResponse<byte[]> response;
+        HttpResponse<String> response;
         try {
-            response = httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
+            response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new NodeClientException("Endpoint capabilities request was interrupted", e);
@@ -114,7 +113,7 @@ public class HttpNodeCapabilitiesClient implements NodeCapabilitiesClient {
             throw new NodeClientException(
                     "Endpoint capabilities API returned HTTP " + response.statusCode(),
                     response.statusCode(),
-                    new String(response.body(), StandardCharsets.UTF_8));
+                    response.body());
         }
 
         try {
