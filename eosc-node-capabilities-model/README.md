@@ -9,7 +9,7 @@ Reusable Java model classes for EOSC Node endpoint capability documents.
 <dependency>
   <groupId>gr.uoa.di.madgik</groupId>
   <artifactId>eosc-node-capabilities-model</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0</version>
 </dependency>
 ```
 <!-- x-release-please-end -->
