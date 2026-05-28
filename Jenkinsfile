@@ -31,7 +31,7 @@ pipeline {
 
     stage('Build & Test') {
       steps {
-        sh './mvnw -B clean package'
+        sh './mvnw -B clean install'
       }
       post {
         always {
