@@ -4,13 +4,15 @@ Small Java HTTP client for the EOSC Node endpoint capabilities API.
 
 ## Maven
 
+<!-- x-release-please-start-version -->
 ```xml
 <dependency>
   <groupId>gr.uoa.di.madgik</groupId>
   <artifactId>eosc-node-endpoint-client</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0</version>
 </dependency>
 ```
+<!-- x-release-please-end -->
 
 The client depends on `eosc-node-capabilities-model`.
 

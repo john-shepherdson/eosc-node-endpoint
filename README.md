@@ -55,25 +55,33 @@ See [`eosc-node-endpoint-service`](eosc-node-endpoint-service) for configuration
 
 Other Java projects can depend on the reusable modules:
 
+<!-- x-release-please-start-version -->
 ```xml
 <dependency>
   <groupId>gr.uoa.di.madgik</groupId>
   <artifactId>eosc-node-capabilities-model</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0</version>
 </dependency>
-
+```
+<!-- x-release-please-end -->
+<!-- x-release-please-start-version -->
+```xml
 <dependency>
   <groupId>gr.uoa.di.madgik</groupId>
   <artifactId>eosc-node-endpoint-client</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0</version>
 </dependency>
-
+```
+<!-- x-release-please-end -->
+<!-- x-release-please-start-version -->
+```xml
 <dependency>
   <groupId>gr.uoa.di.madgik</groupId>
   <artifactId>eosc-node-registry-client</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0</version>
 </dependency>
 ```
+<!-- x-release-please-end -->
 
 The Docker image repository for the service is:
 

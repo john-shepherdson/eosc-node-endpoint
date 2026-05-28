@@ -12,6 +12,7 @@
       "extra-files": [
         {"type": "generic", "path": "README.md"},
         {"type": "generic", "path": "eosc-node-endpoint-client/README.md"},
+        {"type": "generic", "path": "eosc-node-registry-client/README.md"},
         {"type": "generic", "path": "eosc-node-capabilities-model/README.md"}
       ]
     }

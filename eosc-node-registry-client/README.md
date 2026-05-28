@@ -4,13 +4,15 @@ Small Java HTTP client for resolving EOSC Node Registry entries and enriching th
 
 ## Maven
 
+<!-- x-release-please-start-version -->
 ```xml
 <dependency>
   <groupId>gr.uoa.di.madgik</groupId>
   <artifactId>eosc-node-registry-client</artifactId>
-  <version>1.0.1-SNAPSHOT</version>
+  <version>1.1.0</version>
 </dependency>
 ```
+<!-- x-release-please-end -->
 
 The client depends on `eosc-node-endpoint-client`.
 
