@@ -1,6 +1,10 @@
 pipeline {
   agent any
 
+  tools {
+    jdk 'OpenJDK 21'
+  }
+
   options {
     buildDiscarder(logRotator(numToKeepStr: '20'))
     timeout(time: 30, unit: 'MINUTES')
