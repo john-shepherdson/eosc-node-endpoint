@@ -1,15 +1,15 @@
 capabilities.filepath=/app/config/capabilities.json
 
 ### Security Properties ###
-security.admin-emails=${ADMIN_EMAILS}
+security.admin-emails=admin@example.eu
 security.login-redirect=http://localhost:4200/
 security.logout-redirect=http://localhost:4200/
+
 #### EOSC AAI Authentication ####
-spring.security.oauth2.client.provider.eosc.issuer-uri=${ISSUER_URI}
-spring.security.oauth2.client.registration.eosc.client-id=${CLIENT_ID}
+spring.security.oauth2.client.provider.eosc.issuer-uri=
+spring.security.oauth2.client.registration.eosc.client-id=
 spring.security.oauth2.client.registration.eosc.client-name=EOSC
-spring.security.oauth2.client.registration.eosc.client-secret=${CLIENT_SECRET}
+spring.security.oauth2.client.registration.eosc.client-secret=
 spring.security.oauth2.client.registration.eosc.scope=openid,email,profile
 spring.security.oauth2.client.registration.eosc.authorization-grant-type=authorization_code
-#spring.security.oauth2.client.registration.eosc.redirect-uri=http://localhost:4200/api/login/oauth2/code/eosc
-spring.security.oauth2.resourceserver.jwt.issuer-uri=${ISSUER_URI}
+spring.security.oauth2.resourceserver.jwt.issuer-uri=${spring.security.oauth2.client.provider.eosc.issuer-uri}

@@ -7,8 +7,6 @@ services:
     container_name: node-endpoint
     ports:
       - "127.0.0.1:8080:8080"
-    env_file:
-      - ./config/.env
     environment:
       SPRING_CONFIG_ADDITIONAL_LOCATION: file:/app/config/application.properties
       THC_PORT: 8080
@@ -19,11 +17,18 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    restart: always
+    restart: unless-stopped
+    secrets:
+      - source: app_config
+        target: /app/config/application.properties
     volumes:
-      - ./config:/app/config
+      - ./config/capabilities.json:/app/config/capabilities.json
     networks:
       - endpoint-net
+
+secrets:
+  app_config:
+    file: ./config/application.properties
 
 networks:
   endpoint-net:
