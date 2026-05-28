@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/madgeek-arc/eosc-node-endpoint/compare/v1.0.0...v1.1.0) (2026-05-28)
+
+
+### Features
+
+* add HTTP client for resolving Node Registry entries ([43e6c28](https://github.com/madgeek-arc/eosc-node-endpoint/commit/43e6c28165de0b0afbf6fd74363c93086f7338cb))
+
+
+### Bug Fixes
+
+* add java buildpack to build image ([1f220e2](https://github.com/madgeek-arc/eosc-node-endpoint/commit/1f220e2fcc1d7f1a8892209cd8dae8b9fc931712))
+* **client:** accept more JSON response media types ([bfd5a56](https://github.com/madgeek-arc/eosc-node-endpoint/commit/bfd5a569e41442d94e6f4afebed640007675ef61))
+
 ## [1.0.0](https://github.com/madgeek-arc/eosc-node-endpoint/compare/v0.0.1...v1.0.0) (2026-05-06)
 
 
